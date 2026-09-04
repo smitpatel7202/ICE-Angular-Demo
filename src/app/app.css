@@ -1,0 +1,297 @@
+html, body, app-root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Lato', sans-serif;
+    overflow: hidden; 
+  }
+  app-root {
+    display: block;
+    height: 100%;
+  }
+  router-outlet {
+    display: none;
+  }
+  app-chat, app-email {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  .app-container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .content-area {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  .chat-container, .email-workspace {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  .chat-container {
+    grid-template-columns: 25% 50% 25%;
+  }
+  .email-workspace {
+    grid-template-columns: 30% 70%;
+  }
+  .left-chat, .middle-chat, .right-chat, .email-left-panel, .email-right-panel {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    align-items: center;
+    background-color: #ffffff; 
+    border-bottom: 1px solid #ddd;
+  }
+  div[logo-div] {
+    display: flex;
+    align-items: center;
+  }
+  .logo-img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    padding: 3px;
+    gap: 10px;
+  }
+  .header-right button {
+    padding: 4px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+  } 
+  .header-right button.active {
+    background-color: #0077cc;
+    color: white;
+    border-color: #0077cc;
+  } 
+  .filter-area {
+    background-color: rgb(96, 99, 255);
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  .filter-area select {
+    padding: 5px 10px;
+    border: none;
+    color: aliceblue;
+    background-color: rgb(96, 99, 255);
+    cursor: pointer;
+  }
+  .filter-area select option {
+    background-color: rgb(143, 143, 143);
+  }
+  .chat-container {
+    display: flex;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+  }
+  .left-chat {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    height: 100%; 
+    border-right: 1px solid black;
+    background-color: #ffffff;
+  }
+  .left-top {
+    background-color: chocolate;
+    width: 100%;
+    text-align: center;
+    color: white;
+  }
+  .left-top h3 { margin: 20px 0; font-size: 16px; }
+  .left-bottom {
+    background-color: darkseagreen;
+    text-align: center;
+    width: 100%;
+    flex: 1;
+    padding-top: 10px;
+  }
+  .middle-chat {
+    width: 50%;
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid black;
+    justify-content: space-between;
+    background-color: #fdfdfd;
+  }
+  .middle-top {
+    background-color: beige;
+    text-align: left;
+    padding: 15px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .op { color: rgb(0, 0, 255); margin: 5px 0; }
+  .vi { color: rgb(70, 70, 70); margin: 5px 0; }  
+  .middle-bottom {
+    background-color: blanchedalmond;
+    text-align: center;
+    padding: 15px 0;
+  }
+  .middle-bottom input {
+    width: 85%;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid black;
+    outline: none;
+  }
+  .right-chat {
+    width: 25%;
+    height: 100%; 
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+  }
+  .right-top {
+    background-color: darkorange;
+    border-bottom: 1px solid black;
+    color: white;
+  }
+  .right-top h4 {
+    margin: 0;
+    padding: 15px;
+    text-align: center;
+  }
+  .right-bottom {
+    text-align: start;
+    padding: 15px;
+    flex: 1;
+    background-color: #f9f9f9;
+  }
+  .right-bottom p { margin: 8px 0; font-size: 14px; }
+.email-box {
+  padding: 0 !important;
+  background-color: #f4f6f9;
+}
+.email-workspace {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+}
+.email-left-panel {
+  width: 30%;
+  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  padding: 15px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+.email-left-panel h3 {
+  margin-top: 0;
+  font-size: 16px;
+  color: #333;
+}
+.ticket-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+}
+.ticket-item.active-ticket {
+  background-color: #e6f2ff;
+  color: #0077cc;
+  font-weight: bold;
+}
+.email-right-panel {
+  width: 70%;
+  background-color: #ffffff;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+}
+.email-right-panel h2 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+}
+.email-right-panel input, .email-right-panel textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  outline: none;
+}
+.email-right-panel textarea {
+  flex: 1;
+  resize: none;
+}
+
+/* ===== TipTap Editor Styles ===== */
+.tiptap-toolbar {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  padding: 8px;
+  background: #f4f6f9;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+.tiptap-toolbar button {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.tiptap-toolbar button:hover { background: #e6f2ff; }
+.tiptap-toolbar button.active-btn { background: #0077cc; color: #fff; border-color: #0077cc; }
+
+.tiptap-editor {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  overflow-y: auto;
+  min-height: 120px;
+}
+.tiptap-editor .tiptap {
+  padding: 12px;
+  outline: none;
+  min-height: 100%;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.tiptap-editor .tiptap p.is-editor-empty::before {
+  content: attr(data-placeholder);
+  color: #aaa;
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+.tiptap-editor .tiptap blockquote {
+  border-left: 3px solid #0077cc;
+  padding-left: 12px;
+  color: #555;
+}
