@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "server": "node server.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -21,6 +22,8 @@
     "@tiptap/extension-placeholder": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
     "quill": "^2.0.3",
+    "socket.io": "^4.7.1",
+    "socket.io-client": "^4.7.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

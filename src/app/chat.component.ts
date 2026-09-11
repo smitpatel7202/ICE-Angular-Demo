@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { io, Socket } from 'socket.io-client';
 interface ChatMessage {
   time: string;
   sender: string;
   text?: string;        
   isOperator: boolean;
+  senderId?: string;
   fileUrl?: string;    
 }
 @Component({
@@ -47,13 +49,13 @@ interface ChatMessage {
           </div>
           <div class="middle-top" style="display: flex; flex-direction: column; flex: 1;">
             @for (msg of chatMessages; track $index) {
-              <div [class.op]="msg.isOperator" [class.vi]="!msg.isOperator" style="margin: 5px; padding: 8px; border-radius: 5px; max-width: 70%;">
-                <small style="color: #666;">{{ msg.time }} {{ msg.sender }}:</small>
-                @if (msg.text) { <p style="margin: 0;">{{ msg.text }}</p> }
+              <div class="message-bubble" [class.op]="msg.isOperator" [class.vi]="!msg.isOperator">
+                <small class="msg-meta">{{ msg.time }} {{ msg.sender }}:</small>
+                @if (msg.text) { <p class="msg-text">{{ msg.text }}</p> }
                 @if (msg.fileUrl) {
-                  <div style="margin-top: 5px;">
-                    <img [src]="msg.fileUrl" style="max-width: 150px; border-radius: 4px; display: block; border: 1px solid #ccc;" alt="Attachment" />
-                    <a [href]="msg.fileUrl" target="_blank" style="font-size: 12px; color: blue;">View Full File</a>
+                  <div class="attachment-box">
+                    <img [src]="msg.fileUrl" class="chat-img-preview" alt="Attachment" />
+                    <a [href]="msg.fileUrl" target="_blank" class="file-link">View Full File</a>
                   </div>
                 }
               </div>
@@ -145,16 +147,17 @@ interface ChatMessage {
     </div>
   `
 })
-export class ChatComponent {
+export class ChatComponent implements OnInit, OnDestroy {
   isFormSubmitted = false;
   errorMessage = '';
   chatId: number = 0;
   email = ''; city = ''; country = ''; countryCode = ''; region = ''; browser = ''; os = '';
   termsAccepted = false;
   chatMessages: ChatMessage[] = [
-    { time: '[07:53]', sender: 'mani', text: 'Hello, how may I help you today?', isOperator: true },
-    { time: '[07:57]', sender: 'Visitor5908', text: 'Please help me', isOperator: false }
+    { time: '[07:53]', sender: 'mani', text: 'Hello, how may I help you today?', isOperator: true, senderId: 'operator' },
+    { time: '[07:57]', sender: 'Visitor5908', text: 'Please help me', isOperator: false, senderId: 'visitor' }
   ];
+  private socket: Socket | undefined;
   submitForm() {
     if (!this.email.trim() || !this.city.trim() || !this.country.trim() ||
         !this.countryCode.trim() || !this.region.trim() || !this.browser || !this.os) {
@@ -175,23 +178,64 @@ export class ChatComponent {
   }
   sendMsg(textVal: string) {
     if (!textVal.trim()) return;
-    this.chatMessages.push({
-      time: `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`,
-      sender: 'mani',
-      text: textVal,
-      isOperator: true
-    });
+    const now = `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`;
+    // show locally as operator
+    const localMsg: ChatMessage = { time: now, sender: 'mani', text: textVal, isOperator: true, senderId: this.socket?.id };
+    this.chatMessages.push(localMsg);
+    const outMsg = { time: now, sender: 'mani', text: textVal, senderId: this.socket?.id };
+    if (this.socket) {
+      console.log('socket emit -> chat message', outMsg);
+      this.socket.emit('chat message', outMsg);
+    } else {
+      console.warn('socket not connected, cannot emit message');
+    }
   }
   uploadFile(event: any) {
     const file = event.target.files[0];
     if (file) {
       const tempUrl = URL.createObjectURL(file);
-      this.chatMessages.push({
-        time: `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`,
-        sender: 'mani',
-        isOperator: true,
-        fileUrl: tempUrl
+      const now = `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`;
+      const localMsg: ChatMessage = { time: now, sender: 'mani', isOperator: true, fileUrl: tempUrl, senderId: this.socket?.id };
+      this.chatMessages.push(localMsg);
+      const outMsg = { time: now, sender: 'mani', fileUrl: tempUrl, senderId: this.socket?.id };
+      if (this.socket) {
+        console.log('socket emit -> chat message (file)', outMsg);
+        this.socket.emit('chat message', outMsg);
+      } else {
+        console.warn('socket not connected, cannot emit file message');
+      }
+    }
+  }
+
+  ngOnInit(): void {
+    try {
+      this.socket = io('http://localhost:3000');
+      this.socket.on('connect', () => {
+        console.log('connected to socket server', this.socket?.id);
+        try { (window as any).__chatSocket = this.socket; (window as any).__chatSocketId = this.socket?.id; } catch(e){}
       });
+      this.socket.on('chat message', (msg: any) => {
+        const isOp = msg.senderId && this.socket ? msg.senderId === this.socket.id : false;
+        const displayMsg: ChatMessage = {
+          time: msg.time || `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`,
+          sender: msg.sender || 'unknown',
+          text: msg.text,
+          fileUrl: msg.fileUrl,
+          isOperator: isOp,
+          senderId: msg.senderId
+        };
+        this.chatMessages.push(displayMsg);
+      });
+    } catch (err) {
+      console.warn('Socket.IO not available', err);
+    }
+  }
+
+  ngOnDestroy(): void {
+    try {
+      this.socket?.disconnect();
+    } catch (err) {
+      // ignore
     }
   }
 }
