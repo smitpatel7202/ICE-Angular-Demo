@@ -209,7 +209,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     try {
-      this.socket = io('http://localhost:3000');
+      this.socket = io('https://ICE-Angular-Demo.onrender.com');
       this.socket.on('connect', () => {
         console.log('connected to socket server', this.socket?.id);
         try { (window as any).__chatSocket = this.socket; (window as any).__chatSocketId = this.socket?.id; } catch(e){}
