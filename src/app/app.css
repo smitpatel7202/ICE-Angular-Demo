@@ -4,7 +4,7 @@ html, body, app-root {
     height: 100%;
     width: 100%;
     font-family: 'Lato', sans-serif;
-    overflow: hidden; 
+    overflow: hidden;
   }
   app-root {
     display: block;
@@ -56,7 +56,7 @@ html, body, app-root {
     justify-content: space-between;
     padding: 10px 20px;
     align-items: center;
-    background-color: #ffffff; 
+    background-color: #ffffff;
     border-bottom: 1px solid #ddd;
   }
   div[logo-div] {
@@ -80,14 +80,14 @@ html, body, app-root {
     border: 1px solid #ccc;
     background-color: #f8f9fa;
     border-radius: 4px;
-  } 
+  }
   .header-right button.active {
     background-color: #0077cc;
     color: white;
     border-color: #0077cc;
-  } 
+  }
   .filter-area {
-    background-color: rgb(96, 99, 255);
+    background-color: #0095da;
     padding: 10px;
     display: flex;
     gap: 10px;
@@ -96,11 +96,11 @@ html, body, app-root {
     padding: 5px 10px;
     border: none;
     color: aliceblue;
-    background-color: rgb(96, 99, 255);
+    background-color: #0095da;
     cursor: pointer;
   }
   .filter-area select option {
-    background-color: rgb(143, 143, 143);
+    background-color: rgb(161, 161, 161);
   }
   .chat-container {
     display: flex;
@@ -112,19 +112,19 @@ html, body, app-root {
     display: flex;
     flex-direction: column;
     width: 25%;
-    height: 100%; 
+    height: 100%;
     border-right: 1px solid black;
     background-color: #ffffff;
   }
   .left-top {
-    background-color: chocolate;
+    background-color:rgb(180, 180, 180);
     width: 100%;
     text-align: center;
-    color: white;
+    color: black;
   }
   .left-top h3 { margin: 20px 0; font-size: 16px; }
   .left-bottom {
-    background-color: darkseagreen;
+    background-color: rgb(163, 247, 163);
     text-align: center;
     width: 100%;
     flex: 1;
@@ -132,7 +132,7 @@ html, body, app-root {
   }
   .middle-chat {
     width: 50%;
-    height: 100%; 
+    height: 100%;
     display: flex;
     flex-direction: column;
     border-right: 1px solid black;
@@ -162,15 +162,15 @@ html, body, app-root {
   }
   .right-chat {
     width: 25%;
-    height: 100%; 
+    height: 100%;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
   }
   .right-top {
-    background-color: darkorange;
+    background-color: rgb(180, 180, 180);
     border-bottom: 1px solid black;
-    color: white;
+    color: black;
   }
   .right-top h4 {
     margin: 0;
@@ -219,6 +219,9 @@ html, body, app-root {
   color: #0077cc;
   font-weight: bold;
 }
+.ticket-item:hover{
+  background-color: #f5feff;
+}
 .email-right-panel {
   width: 70%;
   background-color: #ffffff;
@@ -246,52 +249,92 @@ html, body, app-root {
   flex: 1;
   resize: none;
 }
-
-/* ===== TipTap Editor Styles ===== */
-.tiptap-toolbar {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  padding: 8px;
-  background: #f4f6f9;
-  border: 1px solid #ccc;
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
+.btn-send{
+  padding: 5px;
 }
-.tiptap-toolbar button {
-  padding: 4px 10px;
-  border: 1px solid #ccc;
-  background: #fff;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-}
-.tiptap-toolbar button:hover { background: #e6f2ff; }
-.tiptap-toolbar button.active-btn { background: #0077cc; color: #fff; border-color: #0077cc; }
-
-.tiptap-editor {
+.quill-editor-container {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  overflow: hidden;
+}
+.profile-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.profile-trigger {
+  padding: 5px 10px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background: white;
   border: 1px solid #ccc;
-  border-radius: 0 0 4px 4px;
-  overflow-y: auto;
-  min-height: 120px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  z-index: 1000;
+  min-width: 150px;
 }
-.tiptap-editor .tiptap {
-  padding: 12px;
-  outline: none;
-  min-height: 100%;
-  font-size: 14px;
-  line-height: 1.6;
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
 }
-.tiptap-editor .tiptap p.is-editor-empty::before {
-  content: attr(data-placeholder);
-  color: #aaa;
-  pointer-events: none;
-  float: left;
-  height: 0;
+.dropdown-menu button:hover {
+  background: #f5f5f5;
 }
-.tiptap-editor .tiptap blockquote {
-  border-left: 3px solid #0077cc;
-  padding-left: 12px;
-  color: #555;
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 2000;
 }
+.modal-content {
+  background: white; padding: 25px; border-radius: 8px;
+  width: 400px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.close-btn {
+  position: absolute; top: 10px; right: 15px;
+  font-size: 24px; cursor: pointer; color: #666;
+}
+.btn-danger {
+  background: #ff4d4d; color: white; border: none;
+  padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px;
+}
+.middle-bottom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-attach {
+  background: #e0e0e0; border: none; font-size: 18px;
+  padding: 8px 12px; border-radius: 4px; cursor: pointer;
+}
+.message-bubble {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  max-width: 70%;
+}
+.message-bubble.op { background: #e3f2fd; align-self: flex-end; margin-left: auto; }
+.message-bubble.vi { background: #f5f5f5; align-self: flex-start; margin-right: auto; }
+.msg-meta { display: block; color: #777; font-size: 11px; margin-bottom: 4px; }
+.msg-text { margin: 0; }
+.chat-img-preview {
+  max-width: 200px; max-height: 150px;
+  border-radius: 4px; margin-top: 5px; border: 1px solid #ddd;
+}
+.attachment-box { margin-top: 5px; }
+.file-link { color: #0288d1; text-decoration: none; font-weight: 500; }
+.file-link:hover { text-decoration: underline; }

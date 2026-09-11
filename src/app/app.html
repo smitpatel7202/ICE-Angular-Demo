@@ -1,17 +1,32 @@
 <div class="app-container">
   <header class="header">
     <div logo-div>
-      <img
-        src="https://cdn.enterice.com/media/wp-content/uploads/2021/01/ICE-Logo190x90.png"
-        alt="ICE LOGO"
-        class="logo-img"
-      />
+      <img src="https://cdn.enterice.com/media/wp-content/uploads/2021/01/ICE-Logo190x90.png" alt="ICE LOGO" class="logo-img" />
     </div>
     <div class="header-right">
       <button routerLink="/chat" routerLinkActive="active">chat</button>
       <button routerLink="/email" routerLinkActive="active">email</button>
-      <span>mani</span>
+      <div style="position: relative; display: inline-block;">
+        <span (click)="showMenu = !showMenu" style="cursor: pointer; font-weight: bold; background: #eee; padding: 5px 10px; border-radius: 4px;">mani ▼</span>
+        @if (showMenu) {
+          <div style="position: absolute; right: 0; background: white; border: 1px solid #ccc; width: 150px; z-index: 10;">
+            <button style="display:block; width:100%; padding:8px; border:none; text-align:left;" (click)="openModal('Profile')">Profile</button>
+            <button style="display:block; width:100%; padding:8px; border:none; text-align:left;" (click)="openModal('Chat History')">Chat History</button>
+            <button style="display:block; width:100%; padding:8px; border:none; text-align:left;" (click)="openModal('Chat with Operator')">Chat with Operator</button>
+            <button style="display:block; width:100%; padding:8px; border:none; text-align:left;" (click)="openModal('Logout')">Logout</button>
+          </div>
+        }
+      </div>
     </div>
   </header>
   <router-outlet></router-outlet>
+  @if (activeModal) {
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 20;">
+      <div style="background: white; padding: 20px; border-radius: 8px; width: 300px; text-align: center;">
+        <h3>{{ activeModal }} Screen</h3>
+        <p>You selected {{ activeModal }} option .</p>
+        <button style="background: red; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;" (click)="activeModal = ''">Close</button>
+      </div>
+    </div>
+  }
 </div>
