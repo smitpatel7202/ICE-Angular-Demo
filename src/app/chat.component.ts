@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { io } from 'socket.io-client';
  
@@ -9,6 +9,16 @@ interface ChatMessage {
   isOperator: boolean;
   fileUrl?: string;    
 }
+
+interface ChatSession {
+  id: string;
+  visitorName: string;
+  operatorName: string;
+  totalTime: string;
+  chatTime: string;
+  waitTime: string;
+  messages: ChatMessage[];
+}
  
 @Component({
   selector: 'app-chat',
@@ -17,31 +27,50 @@ interface ChatMessage {
   styleUrl: './app.css',
   template: `
     <div class="content-area" style="height: calc(100vh - 70px); overflow: hidden;">
-      <div class="filter-area" style="flex-shrink: 0;">                                                    
-        <select>
-          <option value="mychat">My Chats</option>
-          <option value="allchat">All Chats</option>
-        </select>
-        <select>
-          <option value="available">Available</option>
-          <option value="notavailable">Not Available</option>
-        </select>
-      </div>
-     
       <div class="chat-container" style="height: 100%; overflow: hidden; display: flex;">
-        <div class="left-chat" style="height: 100%; overflow-y: auto;">
-          <div class="left-top"><h3>My Chats - Available</h3></div>
-          <div class="left-bottom">
-            <p>Operator: <span>mani</span></p>
-            <p>Visitor: <span>Visitor5908</span></p>
-            <p>Total Time: <span>01:04:23</span></p>
-            <p>Wait Time: <span>00:00:04</span></p>
-            <p>Chat Time: <span>00:41:26</span></p>
+        <div class="left-chat" style="height: 100%; display: flex; flex-direction: column;">
+          <div class="left-top" style="background-color: #0f2c4f; display: flex; gap: 10px; align-items: center; padding: 0 10px; text-align: left; height: 40px; flex-shrink: 0;">
+            <select style="background: transparent; color: white; border: none; outline: none; cursor: pointer; font-size: 14px;">
+              <option value="mychat" style="color: black;">My Chats</option>
+              <option value="allchat" style="color: black;">All Chats</option>
+            </select>
+            <select style="background: transparent; color: white; border: none; outline: none; cursor: pointer; font-size: 14px;">
+              <option value="available" style="color: black;">Available</option>
+              <option value="notavailable" style="color: black;">Not Available</option>
+            </select>
+          </div>
+          <div class="left-bottom" style="background-color: #ffffff; padding: 0; text-align: left; overflow-y: auto; flex: 1;">
+            @for (chat of chats; track chat.id) {
+              <div 
+                (click)="selectChat(chat)"
+                [style.background-color]="selectedChat.id === chat.id ? '#48b5d4' : '#f9f9f9'"
+                [style.color]="selectedChat.id === chat.id ? '#000' : '#333'"
+                style="padding: 10px; border-bottom: 1px solid #ccc; cursor: pointer; font-size: 13px;">
+                
+                <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px;">
+                  <span>JHA</span>
+                  <span>Chatting | 🌐</span>
+                </div>
+                <div style="margin-bottom: 3px;"><b>Operator:</b> {{ chat.operatorName }}</div>
+                <div style="margin-bottom: 8px;"><b>Visitor:</b> {{ chat.visitorName }}</div>
+                
+                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 11px;">
+                  <span>Total Time</span>
+                  <span>Chat Time</span>
+                  <span>Wait Time</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <span>{{ chat.totalTime }}</span>
+                  <span>{{ chat.chatTime }}</span>
+                  <span>{{ chat.waitTime }}</span>
+                </div>
+              </div>
+            }
           </div>
         </div>
         <div class="middle-chat" style="display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; flex: 1;">
           <div style="background: #f1f1f1; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; height: 50px; box-sizing: border-box; flex-shrink: 0;">
-            <span style="font-weight: bold; color: #28a745;">✓ Visitor5908</span>
+            <span style="font-weight: bold; color: #28a745;">✓ {{ selectedChat.visitorName }}</span>
             <div>
               <input #fileBtn type="file" style="display: none" (change)="uploadFile($event)" />
               <button (click)="fileBtn.click()" style="cursor: pointer; background: #ffffff; border: 1px solid #dddddd; border-radius: 4px; padding: 4px 10px; font-size: 14px; font-weight: bold;">
@@ -50,8 +79,8 @@ interface ChatMessage {
             </div>
           </div>
          
-          <div class="middle-top" style="display: flex; flex-direction: column; flex: 1; overflow-y: scroll; gap: 10px; padding: 15px; min-height: 0; background-color: #fdfdfd;">
-            @for (msg of chatMessages; track $index) {
+          <div #scrollMe class="middle-top" style="display: flex; flex-direction: column; flex: 1; overflow-y: scroll; gap: 10px; padding: 15px; min-height: 0; background-color: #fdfdfd;">
+            @for (msg of selectedChat.messages; track $index) {
               <div style="display: flex; align-items: flex-end; gap: 8px; width: 100%; margin-bottom: 5px;" [style.flex-direction]="msg.isOperator ? 'row-reverse' : 'row'">
                 <img [src]="msg.isOperator ? 'https://plus.unsplash.com/premium_photo-1739786995646-480d5cfd83dc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8YXZhdGFyfGVufDB8fDB8fHww' : 'https://plus.unsplash.com/premium_photo-1739786996060-2769f1ded135?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D'" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #ccc; flex-shrink: 0;" alt="User Profile" />
                 <div class="message-bubble" [class.op]="msg.isOperator" [class.vi]="!msg.isOperator" style="margin: 0; max-width: 65%; word-break: break-word;">
@@ -130,6 +159,7 @@ interface ChatMessage {
   `
 })
 export class ChatComponent implements OnInit, OnDestroy {
+  @ViewChild('scrollMe') private myScrollContainer!: ElementRef;
   private socket: any;
  
   isFormSubmitted = false;
@@ -138,12 +168,31 @@ export class ChatComponent implements OnInit, OnDestroy {
   email = ''; city = ''; country = ''; countryCode = ''; region = ''; browser = ''; os = '';
   termsAccepted = false;
  
-  chatMessages: ChatMessage[] = [
-    { time: '[07:53]', sender: 'mani', text: 'Hello, how may I help you today?', isOperator: true },
-    { time: '[07:57]', sender: 'Visitor5908', text: 'Please help me', isOperator: false },
-    { time: '[07:53]', sender: 'mani', text: 'What is the problem?', isOperator: true },
-    { time: '[07:57]', sender: 'Visitor5908', text: 'Please help me to solve this....', isOperator: false }
+  chats: ChatSession[] = [
+    {
+      id: '1', visitorName: 'Visitor4612', operatorName: 'Michael', totalTime: '00:02:09', chatTime: '00:01:57', waitTime: '00:00:05',
+      messages: [
+        { time: '[07:53]', sender: 'Michael', text: 'Hello, how may I help you today?', isOperator: true },
+        { time: '[07:54]', sender: 'Visitor4612', text: 'Please help me', isOperator: false },
+        { time: '[07:55]', sender: 'Michael', text: 'What is the problem?', isOperator: true }
+      ]
+    },
+    {
+      id: '2', visitorName: 'Visitor5908', operatorName: 'mani', totalTime: '01:04:23', chatTime: '00:41:26', waitTime: '00:00:04',
+      messages: [
+        { time: '[10:15]', sender: 'mani', text: 'Hi, welcome to support.', isOperator: true },
+        { time: '[10:16]', sender: 'Visitor5908', text: 'I have a billing issue.', isOperator: false }
+      ]
+    },
+    {
+      id: '3', visitorName: 'Visitor9999', operatorName: 'Sarah', totalTime: '00:05:00', chatTime: '00:04:00', waitTime: '00:01:00',
+      messages: [
+        { time: '[11:00]', sender: 'Sarah', text: 'Good morning!', isOperator: true }
+      ]
+    }
   ];
+
+  selectedChat: ChatSession = this.chats[0];
  
   constructor(private cdr: ChangeDetectorRef) {}
  
@@ -151,7 +200,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.socket = io('https://ICE-Angular-Demo.onrender.com');
  
     this.socket.on('chat message', (incomingMsg: any) => {
-      this.chatMessages.push({
+      this.selectedChat.messages.push({
         time: incomingMsg.time,
         sender: incomingMsg.sender,
         text: incomingMsg.text,
@@ -159,7 +208,21 @@ export class ChatComponent implements OnInit, OnDestroy {
         isOperator: false
       });
       this.cdr.detectChanges();
+      this.scrollToBottom();
     });
+  }
+
+  selectChat(chat: ChatSession) {
+    this.selectedChat = chat;
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+    setTimeout(() => {
+      try {
+        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+      } catch(err) { }
+    }, 10);
   }
  
   submitForm() {
@@ -187,14 +250,15 @@ export class ChatComponent implements OnInit, OnDestroy {
    
     const newMsg: ChatMessage = {
       time: timeString,
-      sender: 'mani',
+      sender: this.selectedChat.operatorName,
       text: textVal,
       isOperator: true
     };
  
-    this.chatMessages.push(newMsg);
+    this.selectedChat.messages.push(newMsg);
     this.socket.emit('chat message', newMsg);
     this.cdr.detectChanges();
+    this.scrollToBottom();
   }
  
   uploadFile(event: any) {
@@ -207,16 +271,17 @@ export class ChatComponent implements OnInit, OnDestroy {
        
         const fileMsg: ChatMessage = {
           time: timeString,
-          sender: 'mani',
+          sender: this.selectedChat.operatorName,
           isOperator: true,
           fileUrl: reader.result as string
         };
  
-        this.chatMessages.push(fileMsg);
+        this.selectedChat.messages.push(fileMsg);
  
         this.socket.emit('chat message', fileMsg);
  
         this.cdr.detectChanges();
+        this.scrollToBottom();
       };
  
       reader.readAsDataURL(file);
