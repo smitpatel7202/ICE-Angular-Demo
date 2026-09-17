@@ -121,6 +121,7 @@ html, body, app-root {
     width: 100%;
     text-align: center;
     color: black;
+    height: 50px;
   }
   .left-top h3 { margin: 20px 0; font-size: 16px; }
   .left-bottom {

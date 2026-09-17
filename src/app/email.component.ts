@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import Quill from 'quill';
-
+ 
 interface Message {
   sender: string;
   avatar: string;
@@ -9,7 +9,7 @@ interface Message {
   text: string;
   isPrivate?: boolean;
 }
-
+ 
 interface Ticket {
   id: string;
   num: string;
@@ -24,7 +24,7 @@ interface Ticket {
   tags: string[];
   messages: Message[];
 }
-
+ 
 @Component({
   selector: 'app-email',
   standalone: true,
@@ -50,7 +50,7 @@ interface Ticket {
           <span class="count-badge">{{ tickets.length }}</span>
         </div>
       </aside>
-
+ 
       <!-- 2. TICKETS LIST -->
       <section class="tickets-panel">
         <div class="tickets-header">
@@ -58,11 +58,11 @@ interface Ticket {
           <small class="text-muted">{{ filteredTickets.length }} items</small>
         </div>
         <div class="search-wrap">
-          <input 
-            type="text" 
-            placeholder="Search tickets..." 
-            [value]="searchQuery" 
-            (input)="searchQuery = $any($event.target).value" 
+          <input
+            type="text"
+            placeholder="Search tickets..."
+            [value]="searchQuery"
+            (input)="searchQuery = $any($event.target).value"
           />
         </div>
         <div class="ticket-items">
@@ -81,7 +81,7 @@ interface Ticket {
           }
         </div>
       </section>
-
+ 
       <!-- 3. CENTER CONVERSATION & QUILL EDITOR -->
       <main class="conversation-panel">
         <!-- Ticket Header -->
@@ -94,7 +94,7 @@ interface Ticket {
           </div>
           <span class="badge-count">&#9993; {{ selectedTicket.messages.length }}</span>
         </div>
-
+ 
         <div class="conv-scrollable">
           <!-- Reply Box with Quill -->
           <div class="reply-card">
@@ -102,17 +102,17 @@ interface Ticket {
               <button [class.tab-active]="replyMode === 'public'" (click)="replyMode = 'public'">Public Reply</button>
               <button [class.tab-active]="replyMode === 'private'" (click)="replyMode = 'private'">Private Note</button>
             </div>
-
+ 
             <div class="to-line">
               <span class="to-label">To:</span>
               <span class="to-chip">{{ selectedTicket.email }}</span>
             </div>
-
+ 
             <!-- Quill Container -->
             <div class="quill-box">
               <div #editorDiv></div>
             </div>
-
+ 
             <div class="reply-actions">
               <label class="kb-check">
                 <input type="checkbox" /> Add to KB
@@ -122,7 +122,7 @@ interface Ticket {
               </button>
             </div>
           </div>
-
+ 
           <!-- Thread Messages -->
           <div class="messages-list">
             @for (m of selectedTicket.messages; track m.time + m.sender) {
@@ -141,7 +141,7 @@ interface Ticket {
           </div>
         </div>
       </main>
-
+ 
       <!-- 4. RIGHT PROPERTIES PANEL -->
       <aside class="props-panel">
         <div class="props-head">
@@ -152,7 +152,7 @@ interface Ticket {
             <option value="Done">Done</option>
           </select>
         </div>
-
+ 
         <div class="props-content">
           <div class="field-group">
             <label>Priority</label>
@@ -162,7 +162,7 @@ interface Ticket {
               <option value="High">High</option>
             </select>
           </div>
-
+ 
           <div class="field-group">
             <div class="field-label-row">
               <label>Assigned To</label>
@@ -173,17 +173,17 @@ interface Ticket {
               <option value="Danny Amacher">Danny Amacher</option>
             </select>
           </div>
-
+ 
           <div class="field-group">
             <label>Due Date</label>
             <input type="date" [value]="selectedTicket.dueDate" (change)="selectedTicket.dueDate = $any($event.target).value" />
           </div>
-
+ 
           <div class="field-group">
             <label>Project</label>
             <input type="text" [value]="selectedTicket.project" (change)="selectedTicket.project = $any($event.target).value" />
           </div>
-
+ 
           <div class="field-group">
             <label>Tags</label>
             <div class="tags-container">
@@ -192,12 +192,12 @@ interface Ticket {
               }
             </div>
             <div class="add-tag-row">
-              <input 
-                type="text" 
-                placeholder="New tag..." 
-                [value]="newTag" 
-                (input)="newTag = $any($event.target).value" 
-                (keydown.enter)="addTag()" 
+              <input
+                type="text"
+                placeholder="New tag..."
+                [value]="newTag"
+                (input)="newTag = $any($event.target).value"
+                (keydown.enter)="addTag()"
               />
               <button (click)="addTag()">Add</button>
             </div>
@@ -593,12 +593,12 @@ interface Ticket {
 export class EmailComponent implements AfterViewInit {
   @ViewChild('editorDiv') editorDiv!: ElementRef;
   quillEditor: any = null;
-
+ 
   activeView = 'my';
   replyMode: 'public' | 'private' = 'public';
   searchQuery = '';
   newTag = '';
-
+ 
   tickets: Ticket[] = [
     {
       id: '#21694',
@@ -674,9 +674,9 @@ export class EmailComponent implements AfterViewInit {
       ]
     }
   ];
-
+ 
   selectedTicket: Ticket = this.tickets[0];
-
+ 
   ngAfterViewInit() {
     if (this.editorDiv) {
       this.quillEditor = new Quill(this.editorDiv.nativeElement, {
@@ -692,7 +692,7 @@ export class EmailComponent implements AfterViewInit {
       });
     }
   }
-
+ 
   get filteredTickets(): Ticket[] {
     let list = this.tickets;
     if (this.activeView === 'my') {
@@ -702,15 +702,15 @@ export class EmailComponent implements AfterViewInit {
     } else if (this.activeView === 'done') {
       list = list.filter(t => t.status === 'Done');
     }
-
+ 
     if (!this.searchQuery.trim()) return list;
     const q = this.searchQuery.toLowerCase();
-    return list.filter(t => 
-      t.title.toLowerCase().includes(q) || 
+    return list.filter(t =>
+      t.title.toLowerCase().includes(q) ||
       t.id.toLowerCase().includes(q)
     );
   }
-
+ 
   getViewTitle(): string {
     switch (this.activeView) {
       case 'my': return 'My Tickets';
@@ -719,19 +719,19 @@ export class EmailComponent implements AfterViewInit {
       default: return 'All Tickets';
     }
   }
-
+ 
   selectTicket(t: Ticket) {
     this.selectedTicket = t;
     if (this.quillEditor) {
       this.quillEditor.setText('');
     }
   }
-
+ 
   sendReply() {
     if (!this.quillEditor) return;
     const plainText = this.quillEditor.getText().trim();
     if (!plainText) return;
-
+ 
     this.selectedTicket.messages.unshift({
       sender: 'Allie Harmon',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces',
@@ -740,17 +740,17 @@ export class EmailComponent implements AfterViewInit {
       text: plainText,
       isPrivate: this.replyMode === 'private'
     });
-
+ 
     this.quillEditor.setText('');
   }
-
+ 
   addTag() {
     if (this.newTag.trim()) {
       this.selectedTicket.tags.push(this.newTag.trim());
       this.newTag = '';
     }
   }
-
+ 
   removeTag(index: number) {
     this.selectedTicket.tags.splice(index, 1);
   }
